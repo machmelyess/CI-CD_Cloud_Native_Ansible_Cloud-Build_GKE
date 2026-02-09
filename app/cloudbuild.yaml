@@ -1,0 +1,15 @@
+steps:
+  # Étape 1 : Build de l'image Docker
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'europe-west1-docker.pkg.dev/test-dev-485716/onertech-repo/billing-app:latest', '.']
+
+  # Étape 2 : Push vers Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'europe-west1-docker.pkg.dev/test-dev-485716/onertech-repo/billing-app:latest']
+
+  # Étape 3 : Déploiement sur GKE
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args: ['apply', '-f', 'k8s-billing.yaml']
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=europe-west1-b'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=onertech-gke-cluster'

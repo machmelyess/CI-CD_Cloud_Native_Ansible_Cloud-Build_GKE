@@ -1,0 +1,17 @@
+- hosts: localhost
+  tasks:
+    - name: Déployer l'app Billing sur GKE
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: billing-webapp
+          spec:
+            replicas: 3
+            template:
+              spec:
+                containers:
+                  - name: html-app
+                    image: "{{ lookup('env', 'IMAGE_URL') }}"

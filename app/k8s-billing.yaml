@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: billing-deployment
+spec:
+  replicas: 2 # On lance 2 copies de l'app pour la sécurité
+  selector:
+    matchLabels:
+      app: billing
+  template:
+    metadata:
+      labels:
+        app: billing
+    spec:
+      containers:
+      - name: billing-app
+        # L'image qu'on va construire juste après
+        image: europe-west1-docker.pkg.dev/test-dev-485716/onertech-repo/billing-app:latest
+        ports:
+        - containerPort: 80 # Ton app écoute sur le port 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: billing-service
+spec:
+  type: LoadBalancer # C'est ce qui va te donner une IP publique
+  selector:
+    app: billing
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
